@@ -280,24 +280,33 @@ def analisar_curriculo_ia(texto, api_key, modo, requisitos, modelo_selecionado):
     url = "https://api.groq.com/openai/v1/chat/completions"
     headers = {"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"}
     
+    # Prompt mais rígido para evitar conversas da IA
     if modo == "Recrutamento (Match de Vaga)":
-        prompt = f"Analise este currículo para a vaga: {requisitos}. CURRÍCULO: {texto[:3000]}. Dê nota 0-10 baseada na compatibilidade técnica. Gere resumo com 3 tópicos. Responda em JSON: {{\"nota\": 8.5, \"resumo\": [\"tópico 1\", \"tópico 2\", \"tópico 3\"]}}"
+        prompt = f"Analise tecnicamente: {texto[:3000]}. Vaga: {requisitos}. Responda APENAS em JSON puro: {{\"nota\": 8.5, \"resumo\": [\"tópico 1\", \"tópico 2\", \"tópico 3\"]}}"
     else:
-        prompt = f"Atue como Orientador analisando: {texto[:3000]}. Avalie clareza, gramática e estrutura (ignore vaga). Dê nota 0-10. Liste 3 melhorias. Responda em JSON: {{\"nota\": 7.0, \"resumo\": [\"melhoria 1\", \"melhoria 2\", \"melhoria 3\"]}}"
+        prompt = f"Avalie estrutura e gramática: {texto[:3000]}. Responda APENAS em JSON puro: {{\"nota\": 7.0, \"resumo\": [\"melhoria 1\", \"melhoria 2\", \"melhoria 3\"]}}"
     
-    modelos = [modelo_selecionado] + [m for m in MODELOS_GROQ.values() if m != modelo_selecionado]
-    for modelo in modelos:
-        try:
-            res = requests.post(url, json={"model": modelo, "messages": [{"role": "user", "content": prompt}], "temperature": 0.1}, headers=headers, timeout=30)
-            if res.status_code == 200:
-                conteudo = res.json()['choices'][0]['message']['content'].strip()
-                conteudo = re.sub(r'^```json\n|```$', '', conteudo, flags=re.MULTILINE).strip()
-                dados = json.loads(conteudo)
-                dados['nota'] = float(dados['nota'])
+    try:
+        res = requests.post(url, json={
+            "model": modelo_selecionado, 
+            "messages": [{"role": "user", "content": prompt}], 
+            "temperature": 0.1,
+            "response_format": {"type": "json_object"} # FORÇA O GROQ A MANDAR JSON
+        }, headers=headers, timeout=60) # Aumentamos o tempo de espera
+        
+        if res.status_code == 200:
+            conteudo = res.json()['choices'][0]['message']['content'].strip()
+            # Limpeza extra para garantir que só pegamos o que está entre chaves { }
+            match = re.search(r'\{.*\}', conteudo, re.DOTALL)
+            if match:
+                dados = json.loads(match.group())
                 return dados
-        except:
-            continue
-    return None
+        else:
+            st.error(f"Erro na API Groq: Status {res.status_code}")
+            return None
+    except Exception as e:
+        st.error(f"Erro de conexão: {str(e)}")
+        return None
 
 # ==========================================
 # INTERFACE PRINCIPAL
