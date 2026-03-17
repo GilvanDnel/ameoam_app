@@ -262,8 +262,19 @@ def validar_e_listar_modelos(api_key):
         return False, []
 
 def mostrar_pdf_na_tela(arquivo_pdf):
-    base64_pdf = base64.b64encode(arquivo_pdf.getvalue()).decode('utf-8')
-    st.markdown(f'<iframe src="data:application/pdf;base64,{base64_pdf}" width="100%" height="600" style="border-radius: 10px; border: 1px solid #334155;"></iframe>', unsafe_allow_html=True)
+    bytes_pdf = arquivo_pdf.getvalue()
+    
+    # Plano B: Botão de download logo acima do visualizador (Boa prática de UX)
+    st.download_button(
+        label="📄 Baixar Currículo Original",
+        data=bytes_pdf,
+        file_name=arquivo_pdf.name,
+        mime="application/pdf",
+        use_container_width=True
+    )
+    
+    # O visualizador profissional que burla o bloqueio do Chrome
+    pdf_viewer(input=bytes_pdf, height=600)
 
 def analisar_curriculo_ia(texto, api_key, modo, requisitos, modelo_selecionado):
     url = "https://api.groq.com/openai/v1/chat/completions"
