@@ -8,7 +8,7 @@ import base64
 import plotly.express as px
 from datetime import datetime
 from dotenv import load_dotenv
-
+from streamlit_pdf_viewer import pdf_viewer
 # Carrega variáveis de ambiente
 load_dotenv()
 
