@@ -4,3 +4,4 @@ requests
 pandas
 plotly
 python-dotenv
+streamlit-pdf-viewer
