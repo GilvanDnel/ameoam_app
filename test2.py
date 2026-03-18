@@ -245,12 +245,9 @@ def main():
 
             st.markdown("**Informações**")
             st.markdown("""
-                <a href="https://console.groq.com/keys" target="_blank" class="get-key-card">
-                    <label><i class="fa-solid fa-key"></i> Obter API Key Gratuita</label>
-                </a>
 
                 <a href="https://console.groq.com/keys" target="_blank" class="sidebar-nav-card">
-                    <span><i class="fa-brands"></i></span>
+                    <span><i class="fa-brands fa-key"></i></span>
                     <label>Adquir API KEY</label>
                 </a>
                 
