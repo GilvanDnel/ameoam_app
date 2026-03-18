@@ -13,7 +13,7 @@ from streamlit_pdf_viewer import pdf_viewer
 # CONFIGURAÇÃO DE DESIGN SISTÊMICO (UI/UX)
 # ==========================================
 st.set_page_config(
-    page_title="AMEOAM"
+    page_title="AMEOAM",
     page_icon="🌿",
     layout="wide",
     initial_sidebar_state="expanded"
