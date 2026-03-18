@@ -235,7 +235,7 @@ def main():
             video_html = renderizar_video_como_gif("meu_video.mp4")
             st.markdown(video_html, unsafe_allow_html=True)
             st.markdown("**🔐 Autenticação**")
-            api_key_input = st.text_input("Groq Cloud Key", type="password", label_visibility="collapsed")
+            api_key_input = st.text_input("Groq Cloud Key", type="password", label_visibility="collapsed", placeholder="Digite sua API Key aqui")
             if api_key_input: 
                 st.session_state.key = api_key_input
             
@@ -243,8 +243,12 @@ def main():
             st.session_state.mod = modelo_input
 
 
-            st.markdown("**🚀 Atalhos Rápidos**")
+            st.markdown("**Informações**")
             st.markdown("""
+                <a href="https://console.groq.com/keys" target="_blank" class="get-key-card">
+                    <label><i class="fa-solid fa-key"></i> Obter API Key Gratuita</label>
+                </a>
+                
                 <a href="https://youtu.be/2wPQVni6A6s" target="_blank" class="sidebar-nav-card">
                     <span><i class="fa-brands fa-youtube"></i></span>
                     <label>Tutorial YouTube</label>
